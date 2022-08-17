@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
 import com.fis.training.microservice.subscriptionservice.bean.Book;
 import com.fis.training.microservice.subscriptionservice.bean.Subscription;
@@ -18,11 +17,14 @@ import com.fis.training.microservice.subscriptionservice.repository.BookRepoProx
 import com.fis.training.microservice.subscriptionservice.repository.SubscriptionRepository;
 
 
+
+
 @RestController
 public class SubscriptionServiceController {
 	
 	@Autowired
 	BookRepoProxy proxy;
+	
 	@Autowired
 	SubscriptionRepository repository;
 
@@ -32,31 +34,31 @@ public class SubscriptionServiceController {
 		
 	}
 	
-	@GetMapping(value = "/getbookstring")
-	private String getStudentStringWithRestTemplate()
-	{
-	    String uri = "http://localhost:8080/books";
-	//	 String uri = "http://localhost:8080/subscriptions";
-	    RestTemplate restTemplate = new RestTemplate();
-	    String result = restTemplate.getForObject(uri, String.class);
-	    return result; 
-	}
+//	@GetMapping(value = "/getbookstring")
+//	private String getStudentStringWithRestTemplate()
+//	{
+//	  //  String uri = "http://localhost:8080/books";
+//		 String uri = "http://localhost:8765/API-GATEWAY/books";
+//	    RestTemplate restTemplate = new RestTemplate();
+//	    String result = restTemplate.getForObject(uri, String.class);
+//	    return result; 
+//	}
 	
 	
-	@GetMapping(value = "/getbookstringfeign")
-	private Book getStudentStringWithFeign()
-	{
-		
-		System.out.println("proxy.retrieveBooks() "+proxy.retrieveBooks());
-		return proxy.retrieveBooks();
-	   // return result; 
-	}
+//	@GetMapping(value = "/getbookstringfeign")
+//	private Book getStudentStringWithFeign()
+//	{
+//		
+//		System.out.println("proxy.retrieveBooks() "+proxy.retrieveBooks());
+//		return proxy.retrieveBooks();
+//	   // return result; 
+//	}
 	
 	@GetMapping(value = "/book/{id}")
 	private Book getBookById(@PathVariable String id)
 	{
 		Book bookById = proxy.bookById(id);
-		System.out.println("proxy.retrieveBooks() "+proxy.bookById(id));
+		System.out.println("proxy.retrieveBooks() "+bookById);
 		return bookById;
 	}
 	
@@ -81,5 +83,19 @@ public class SubscriptionServiceController {
 		}
 	}
 	
+	
 
+
+	/**
+	 * To see the circuit breaker behavior close the book-service spring application
+	 * @return
+	 */
+	@GetMapping(value = "/showBooks")
+	private List<Book> showBooks()
+	{
+		return proxy.show();
+	}
+
+	
+	 
 }
